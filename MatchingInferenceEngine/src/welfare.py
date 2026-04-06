@@ -46,24 +46,6 @@ def _resolve_categories(student_df: pd.DataFrame, categories: list[str] | None) 
         return [c for c in categories if c in student_df.columns]
     return [c for c in ["Residential District", "Home Language"] if c in student_df.columns]
 
-
-# ---------------------------------------------------------------------------
-# Priority resolution — ascending bug fix
-#
-# pandas Series.rank(pct=True, ascending=True)  → small values → small percentiles
-# pandas Series.rank(pct=True, ascending=False) → small values → large percentiles
-#
-# Goal: best student → highest percentile.
-#
-#   priority_higher_is_better=True  (e.g. test score): higher = better
-#     → higher score → higher percentile → ascending=True
-#
-#   priority_higher_is_better=False (e.g. raw lottery number: lower = better):
-#     → lower score → higher percentile → ascending=False
-#
-# The old code hardcoded ascending=False, correct only for the lottery case.
-# ---------------------------------------------------------------------------
-
 def _resolve_priority(
     df: pd.DataFrame,
     priority_col: str | None,
@@ -194,7 +176,6 @@ def summarize_global_sweep(student_df: pd.DataFrame, max_p: int | None = None) -
 # ---------------------------------------------------------------------------
 # Metric 2 (new): rank distribution
 # How many students got their 1st, 2nd, … kth choice, plus unmatched.
-# Richer than average rank: reveals the full shape.
 # ---------------------------------------------------------------------------
 
 def summarize_rank_distribution(
@@ -240,7 +221,7 @@ def summarize_rank_distribution_by_category(
 
 
 # ---------------------------------------------------------------------------
-# Metric 3 (new): average rank + variance (social inequity)
+# Metric 3 : average rank + variance
 # ---------------------------------------------------------------------------
 
 def summarize_rank_stats_overall(student_df: pd.DataFrame) -> dict[str, float]:
