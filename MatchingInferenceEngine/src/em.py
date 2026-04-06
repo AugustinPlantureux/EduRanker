@@ -97,9 +97,18 @@ def run_single_simulation(params, df, match_stats_df, school_info_df,
     
     agg = compute_aggregates(all_rankings, matches_schools,
                             np.array(all_district_assignments), all_schools)
-
+                           
     if return_rankings:
-        return agg, all_rankings, np.array(all_district_assignments)
+      priority_info = school_lotteries if per_school_lottery else lottery_global
+      return (
+        agg,
+        all_rankings,
+        np.array(all_district_assignments),
+        rankings_as_indices,   # list[np.ndarray]  — indices dans all_schools
+        matches_idx,           # np.ndarray int    — -1 = non-matché
+        priority_info,         # matrice (n_schools × n_students) ou vecteur (n_students,)
+        list(all_schools),     # ordre de référence pour les indices
+        )
     return agg
 
 
